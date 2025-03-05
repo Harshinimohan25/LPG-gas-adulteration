@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        form { max-width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <h2>Signup</h2>
+    <form id="signupForm">
+        <input type="text" id="fullname" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Signup</button>
+    </form>
+
+    <p>Already have an account? <a href="login.html">Login</a></p>
+
+    <script type="module">
+        // Firebase Configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyByGhwYGSHgd_CKAxUPv1za15rI5EAxTQ4",
+  authDomain: "login-details-6d2c8.firebaseapp.com",
+  databaseURL: "https://login-details-6d2c8-default-rtdb.firebaseio.com",
+  projectId: "login-details-6d2c8",
+  storageBucket: "login-details-6d2c8.firebasestorage.app",
+  messagingSenderId: "439486214893",
+  appId: "1:439486214893:web:a69597d3790627551d12e4",
+  measurementId: "G-CG25BM997Q"
+};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+
+        document.getElementById("signupForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const fullname = document.getElementById("fullname").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "users", user.uid), {
+                    fullname: fullname,
+                    email: email
+                });
+
+                alert("Signup successful! Redirecting to login...");
+                window.location.href = "login.html";
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    </script>
+
+</body>
+</html>
